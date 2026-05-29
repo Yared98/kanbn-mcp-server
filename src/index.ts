@@ -406,6 +406,32 @@ server.registerTool(
   }
 );
 
+// Create comment on card
+server.registerTool(
+  "kanbn_create_comment",
+  {
+    description: "Create a new comment on a card",
+    inputSchema: z.object({
+      cardId: z.string().describe("The card ID where the comment will be added"),
+      comment: z.string().describe("The content of the comment"),
+    }),
+  },
+  async ({ cardId, comment }) => {
+    try {
+      const result = await client.createComment(cardId, comment);
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }]
+      };
+    } catch (err: any) {
+      return {
+        isError: true,
+        content: [{ type: "text", text: `Error creating comment: ${err.message}` }]
+      };
+    }
+  }
+);
+
+
 // -------------------------------------------------------------
 // TRANSPORT SETUP & SERVER START
 // -------------------------------------------------------------

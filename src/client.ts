@@ -43,6 +43,17 @@ export interface Card {
   labels?: string[];
 }
 
+export interface Comment {
+  id: number;
+  publicId: string;
+  comment: string;
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string | null;
+  deletedAt?: string | null;
+}
+
+
 export class KanbnClient {
   private baseUrl: string;
   private apiKey: string;
@@ -225,6 +236,13 @@ export class KanbnClient {
   async deleteCard(id: string): Promise<void> {
     return this.request<void>(`/cards/${id}`, {
       method: "DELETE",
+    });
+  }
+
+  async createComment(cardId: string, comment: string): Promise<Comment> {
+    return this.request<Comment>(`/cards/${cardId}/comments`, {
+      method: "POST",
+      body: JSON.stringify({ comment }),
     });
   }
 }
