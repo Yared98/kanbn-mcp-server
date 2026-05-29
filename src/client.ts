@@ -211,9 +211,18 @@ export class KanbnClient {
   }
 
   async createCard(data: { listId: string; title: string; description?: string; position?: number; labels?: string[] }): Promise<Card> {
+    const { listId, ...rest } = data;
+    const payload = {
+      title: rest.title,
+      description: rest.description ?? "",
+      listPublicId: listId,
+      labelPublicIds: rest.labels ?? [],
+      memberPublicIds: [],
+      position: rest.position === 0 ? "start" : "end",
+    };
     return this.request<Card>("/cards", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
   }
 
@@ -227,9 +236,20 @@ export class KanbnClient {
       labels?: string[];
     }
   ): Promise<Card> {
+    const { listId, position, ...rest } = data;
+    const payload: any = {
+      ...rest,
+    };
+    if (listId !== undefined) {
+      payload.listPublicId = listId;
+      // If listPublicId is updated, we MUST send index to bypass the server t.index validation bug.
+      payload.index = position !== undefined ? position : 0;
+    } else if (position !== undefined) {
+      payload.index = position;
+    }
     return this.request<Card>(`/cards/${id}`, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
   }
 
