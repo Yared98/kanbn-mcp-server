@@ -1,0 +1,29 @@
+{
+  "name": "kanbn-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for interacting with Kanbn boards, workspaces, lists, and tasks",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "kanbn",
+    "kanban",
+    "modelcontextprotocol"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.4.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
