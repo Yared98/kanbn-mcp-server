@@ -54,7 +54,18 @@ export function toSlimCard(card: any) {
     description: card.description || undefined,
     listId: card.listPublicId || card.listId,
     labels: card.labels || card.labelPublicIds || undefined,
-    dueDate: card.dueDate || undefined
+    dueDate: card.dueDate || undefined,
+    checklists: card.checklists && card.checklists.length > 0
+      ? card.checklists.map((ch: any) => ({
+          id: ch.publicId || ch.id,
+          name: ch.name || ch.title,
+          items: (ch.items || []).map((it: any) => ({
+            id: it.publicId || it.id,
+            title: it.title,
+            completed: !!it.completed
+          }))
+        }))
+      : undefined
   };
 }
 
