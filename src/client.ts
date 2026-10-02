@@ -5,42 +5,49 @@ dotenv.config();
 
 export interface Workspace {
   id: string;
+  publicId?: string;
   name: string;
   slug: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Board {
   id: string;
+  publicId?: string;
   name: string;
   slug: string;
   description?: string;
-  workspaceId: string;
-  createdAt: string;
-  updatedAt: string;
+  workspaceId?: string;
+  createdAt?: string;
+  updatedAt?: string;
   lists?: List[];
+  labels?: any[];
 }
 
 export interface List {
   id: string;
+  publicId?: string;
   name: string;
-  position: number;
-  boardId: string;
-  createdAt: string;
-  updatedAt: string;
+  position?: number;
+  boardId?: string;
+  createdAt?: string;
+  updatedAt?: string;
   cards?: Card[];
 }
 
 export interface Card {
   id: string;
+  publicId?: string;
   title: string;
   description?: string;
-  position: number;
-  listId: string;
-  createdAt: string;
-  updatedAt: string;
-  labels?: string[];
+  position?: number;
+  listId?: string;
+  listPublicId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  labels?: any[];
+  dueDate?: string;
 }
 
 export interface Comment {
@@ -259,10 +266,63 @@ export class KanbnClient {
     });
   }
 
+  // Comments
+  async listComments(cardId: string): Promise<Comment[]> {
+    return this.request<Comment[]>(`/cards/${cardId}/comments`);
+  }
+
   async createComment(cardId: string, comment: string): Promise<Comment> {
     return this.request<Comment>(`/cards/${cardId}/comments`, {
       method: "POST",
       body: JSON.stringify({ comment }),
     });
   }
+
+  async updateComment(cardId: string, commentId: string, comment: string): Promise<Comment> {
+    return this.request<Comment>(`/cards/${cardId}/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify({ comment }),
+    });
+  }
+
+  async deleteComment(cardId: string, commentId: string): Promise<void> {
+    return this.request<void>(`/cards/${cardId}/comments/${commentId}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Labels
+  async listLabels(boardId: string): Promise<any[]> {
+    return this.request<any[]>(`/boards/${boardId}/labels`);
+  }
+
+  async createLabel(boardId: string, data: { name: string; colourCode?: string }): Promise<any> {
+    return this.request<any>(`/boards/${boardId}/labels`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Checklists
+  async createChecklist(cardId: string, title: string): Promise<any> {
+    return this.request<any>(`/cards/${cardId}/checklists`, {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async addChecklistItem(checklistId: string, title: string): Promise<any> {
+    return this.request<any>(`/checklists/${checklistId}/items`, {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async toggleChecklistItem(itemId: string, completed: boolean): Promise<any> {
+    return this.request<any>(`/checklist-items/${itemId}`, {
+      method: "PUT",
+      body: JSON.stringify({ completed }),
+    });
+  }
 }
+
