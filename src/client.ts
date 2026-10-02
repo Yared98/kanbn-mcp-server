@@ -324,7 +324,7 @@ export class KanbnClient {
   async createChecklist(cardId: string, title: string): Promise<any> {
     return this.request<any>(`/cards/${cardId}/checklists`, {
       method: "POST",
-      body: JSON.stringify({ title }),
+      body: JSON.stringify({ name: title }),
     });
   }
 
