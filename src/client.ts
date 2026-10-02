@@ -268,7 +268,23 @@ export class KanbnClient {
 
   // Comments
   async listComments(cardId: string): Promise<Comment[]> {
-    return this.request<Comment[]>(`/cards/${cardId}/comments`);
+    const card = (await this.getCard(cardId)) as any;
+    if (!card || !card.activities) return [];
+    const comments: Comment[] = [];
+    for (const act of card.activities) {
+      if (act.comment) {
+        comments.push({
+          id: act.comment.id,
+          publicId: act.comment.publicId,
+          comment: act.comment.comment,
+          createdBy: act.comment.createdBy || act.user?.name || act.user?.email || "Unknown",
+          createdAt: act.createdAt,
+          updatedAt: act.comment.updatedAt,
+          deletedAt: act.comment.deletedAt,
+        });
+      }
+    }
+    return comments;
   }
 
   async createComment(cardId: string, comment: string): Promise<Comment> {
@@ -293,7 +309,8 @@ export class KanbnClient {
 
   // Labels
   async listLabels(boardId: string): Promise<any[]> {
-    return this.request<any[]>(`/boards/${boardId}/labels`);
+    const board = await this.getBoard(boardId);
+    return board.labels || [];
   }
 
   async createLabel(boardId: string, data: { name: string; colourCode?: string }): Promise<any> {
