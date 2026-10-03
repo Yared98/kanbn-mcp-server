@@ -193,9 +193,10 @@ export class KanbnClient {
 
   // Lists
   async createList(data: { boardId: string; name: string; position?: number }): Promise<List> {
+    const { boardId, name, position } = data;
     return this.request<List>("/lists", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify({ boardPublicId: boardId, name, position }),
     });
   }
 
