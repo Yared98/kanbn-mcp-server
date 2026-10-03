@@ -337,9 +337,15 @@ export class KanbnClient {
   }
 
   async toggleChecklistItem(itemId: string, completed: boolean): Promise<any> {
-    return this.request<any>(`/checklist-items/${itemId}`, {
-      method: "PUT",
+    return this.request<any>(`/checklists/items/${itemId}`, {
+      method: "PATCH",
       body: JSON.stringify({ completed }),
+    });
+  }
+
+  async deleteChecklistItem(itemId: string): Promise<any> {
+    return this.request<any>(`/checklists/items/${itemId}`, {
+      method: "DELETE",
     });
   }
 }
