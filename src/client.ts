@@ -171,10 +171,21 @@ export class KanbnClient {
     return this.request<Board>(`/boards/${id}`);
   }
 
-  async createBoard(data: { workspaceId: string; name: string; slug?: string; description?: string }): Promise<Board> {
-    return this.request<Board>("/boards", {
+  async createBoard(data: { workspaceId: string; name: string; slug?: string; description?: string; lists?: string[]; labels?: string[] }): Promise<Board> {
+    const { workspaceId, name, description, lists, labels, slug } = data;
+    const defaultLists = lists && lists.length > 0 ? lists : ["Backlog", "To Do", "In Progress", "Code Review", "Done"];
+    const defaultLabels = labels && labels.length > 0 ? labels : ["Bug", "Feature", "Enhancement", "Critical"];
+
+    return this.request<Board>(`/workspaces/${workspaceId}/boards`, {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        name,
+        workspacePublicId: workspaceId,
+        description: description ?? "",
+        slug,
+        lists: defaultLists,
+        labels: defaultLabels,
+      }),
     });
   }
 
